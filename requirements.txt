@@ -5,5 +5,5 @@ matplotlib
 tensorflow
 scikit-learn
 yfinance
-keras
-ta
+Frozen-Flask
+gunicorn

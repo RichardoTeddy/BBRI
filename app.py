@@ -11,6 +11,7 @@ from sklearn.preprocessing import MinMaxScaler
 from datetime import datetime, timedelta
 import json
 import yfinance as yf
+from flask_frozen import Freezer
 
 # Configure matplotlib
 matplotlib.use('Agg')
@@ -663,4 +664,8 @@ def generate_loss_plot(model_history):
 if __name__ == "__main__":
     if model is None:
         print("Warning: Model failed to load. Predictions will not work.")
-    app.run(debug=True, port=5000)
+    if os.environ.get('FREEZER_BASE_URL'):
+        freezer = Freezer(app)
+        freezer.freeze()
+    else:
+        app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
