@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from keras.models import load_model
 from sklearn.preprocessing import MinMaxScaler
 from datetime import datetime, timedelta
@@ -349,9 +349,12 @@ def hasil():
         )
 
 
-@app.route("/predict", methods=["POST"])
+@app.route("/predict", methods=["GET", "POST"])
 def predict():
     """Handle prediction requests"""
+    if request.method == "GET":
+        return render_template("input.html", title="Input")
+
     try:
         # Check if model is loaded
         if model is None:
@@ -436,9 +439,9 @@ def predict():
     except Exception as e:
         print(f"Error in prediction: {str(e)}")
         return render_template(
-            "error.html",
-            error=f"Terjadi kesalahan: {str(e)}",
-            title="Error"
+            "input.html",
+            error=str(e),
+            title="Input"
         )
 
 

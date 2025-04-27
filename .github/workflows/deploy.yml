@@ -21,10 +21,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install flask-frozen
+          pip install Frozen-Flask  # Explicit installation of Frozen-Flask
 
       - name: Build static files
         run: |
+          mkdir -p build
           python freeze.py
 
       - name: Deploy to GitHub Pages
