@@ -21,7 +21,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+<<<<<<< HEAD
           pip install Frozen-Flask  # Explicit installation of Frozen-Flask
+=======
+>>>>>>> 3cbf47d049743ebfe5ddf2a4121ab6b013958679
 
       - name: Build static files
         run: |
