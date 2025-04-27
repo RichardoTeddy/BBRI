@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="fixed inset-0 w-full h-full bg-cover bg-center" style="background-image: url('{{ url_for('static', filename='bg.jpg') }}');">
+    <div class="relative h-screen flex flex-col items-center justify-center p-6">
+        <div class="w-full max-w-6xl bg-white/90 backdrop-blur-sm rounded-xl shadow-2xl p-8 overflow-y-auto max-h-[90vh]">
+            <h1 class="text-3xl font-bold text-center mb-8">Hasil Prediksi Saham BBRI</h1>
+
+            <!-- Prediction Charts -->
+            {% if plots %}
+            <!-- Future Prediction Plot -->
+            <div class="mb-8">
+                <div class="bg-white rounded-lg shadow-lg p-4">
+                    <h3 class="text-lg font-semibold mb-4">Prediksi Harga Saham {{ prediction_data|length }} Hari Kedepan</h3>
+                    {{ plots.trend | safe }}
+                </div>
+            </div>
+
+            <!-- Historical vs Prediction Plot -->
+            <div class="mb-8">
+                <div class="bg-white rounded-lg shadow-lg p-4">
+                    <h3 class="text-lg font-semibold mb-4">Trend Historis dan Prediksi</h3>
+                    {{ plots.validation | safe }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- AI Trading Recommendation -->
+            <div class="mb-8">
+                <div class="bg-white rounded-lg shadow-lg p-4">
+                    <h3 class="text-lg font-semibold mb-4">Rekomendasi AI Trading</h3>
+                    
+                    {% if ai_recommendation %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Action Recommendation -->
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <p class="text-2xl font-bold text-center 
+                                {% if ai_recommendation.action == 'BELI' %}text-green-600
+                                {% elif ai_recommendation.action == 'JUAL' %}text-red-600
+                                {% else %}text-blue-600{% endif %}">
+                                {{ ai_recommendation.action }}
+                            </p>
+                            <p class="text-sm text-gray-600 mt-2 text-center">Rekomendasi Tindakan</p>
+                        </div>
+                        
+                        <!-- Confidence & Risk -->
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="font-bold text-center">
+                                Tingkat Keyakinan: {{ ai_recommendation.confidence }}<br>
+                                Level Risiko: 
+                                <span class="{% if ai_recommendation.risk_level == 'TINGGI' %}text-red-600
+                                           {% elif ai_recommendation.risk_level == 'SEDANG' %}text-yellow-600
+                                           {% else %}text-green-600{% endif %}">
+                                    {{ ai_recommendation.risk_level }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Analysis Reasoning -->
+                    <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                        <p class="font-medium mb-2">Alasan Rekomendasi:</p>
+                        <ul class="list-disc ml-4">
+                            {% for reason in ai_recommendation.reasoning %}
+                            <li class="text-sm text-gray-600">{{ reason }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Prediction Table -->
+            {% if prediction_data %}
+            <div class="mb-8">
+                <h2 class="text-2xl font-semibold mb-4 text-center">Detail Prediksi Harga Saham</h2>
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="border-b-2 border-gray-300 px-6 py-3 text-left font-semibold">Tanggal</th>
+                                <th class="border-b-2 border-gray-300 px-6 py-3 text-right font-semibold">Harga Prediksi (IDR)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pred in prediction_data %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="border-b border-gray-200 px-6 py-3">{{ pred.date }}</td>
+                                <td class="border-b border-gray-200 px-6 py-3 text-right">{{ "{:,.2f}".format(pred.price) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Evaluation Metrics -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-semibold mb-4 text-center">Evaluasi Model</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- MAPE Card -->
+                    <div class="bg-blue-50/50 p-6 rounded-lg">
+                        <h3 class="text-xl font-bold text-blue-600 text-center mb-2">
+                            MAPE: {{ "%.2f"|format(mape) }}%
+                        </h3>
+                        <p class="text-sm text-gray-600 text-center">
+                            Mean Absolute Percentage Error - mengukur rata-rata persentase kesalahan prediksi
+                        </p>
+                    </div>
+
+                    <!-- Accuracy Card -->
+                    <div class="bg-green-50/50 p-6 rounded-lg">
+                        <h3 class="text-xl font-bold text-green-600 text-center mb-2">
+                            Akurasi: {{ "%.2f"|format(100 - mape) }}%
+                        </h3>
+                        <p class="text-sm text-gray-600 text-center">
+                            Tingkat akurasi model dalam memprediksi harga saham
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-center space-x-6">
+                <a href="{{ url_for('input') }}" 
+                   class="bg-gray-600 text-white px-8 py-3 rounded-lg hover:bg-gray-700 transition-colors duration-200 font-semibold">
+                    Prediksi Baru
+                </a>
+                <a href="{{ url_for('index') }}" 
+                   class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-semibold">
+                    Kembali ke Beranda
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

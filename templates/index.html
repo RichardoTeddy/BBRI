@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="fixed inset-0 w-full h-full bg-cover bg-center" style="background-image: url('{{ url_for('static', filename='bg.jpg') }}');">
+    <div class="absolute inset-0 bg-gradient-to-br from-black/50 to-black/30"></div>
+    <div class="relative h-screen flex flex-col items-center justify-center p-6">
+        <div class="w-full max-w-6xl px-4">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                    PREDIKSI HARGA PENUTUPAN SAHAM BBRI<br/>
+                    DENGAN PENDEKATAN DEEP LEARNING:<br/>
+                    STUDI KASUS LONG SHORT-TERM MEMORY (LSTM)
+                </h1>
+                <p class="text-xl text-white/90 mb-12 max-w-3xl mx-auto">
+                    Model Prediksi Saham BBRI ini menggunakan parameter Harga penutupan untuk mengetahui probabilitas kenaikan Harga menggunakan metode LSTM.
+                </p>
+                <div class="flex justify-center">
+                    <a href="{{ url_for('input') }}" 
+                       class="inline-block bg-white text-gray-900 hover:bg-gray-100 px-12 py-4 rounded-lg transition-colors duration-200 font-semibold text-lg shadow-lg">
+                        Mulai
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute bottom-8 text-center text-white/70">
+            <p class="text-sm font-medium">
+                Created by Richardo Teddy Ardhana 215314015
+            </p>
+            <p class="text-sm font-medium">
+                Developed using Long Short-Term Memory (LSTM) Neural Networks
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

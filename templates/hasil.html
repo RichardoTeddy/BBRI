@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="fixed inset-0 w-full h-full bg-cover bg-center" style="background-image: url('{{ url_for('static', filename='bg.jpg') }}');">
+    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="relative min-h-screen flex flex-col items-center justify-center p-6">
+        <div class="w-full max-w-6xl bg-white/90 backdrop-blur-sm rounded-xl shadow-2xl p-8">
+            <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">Analisis Saham BBRI</h1>
+            
+            <!-- Close Price History -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4">Historical Close Price</h2>
+                <div class="bg-white rounded-lg shadow-lg p-4">
+                    {% if close_price_plot %}
+                    <img src="{{ close_price_plot }}" 
+                         alt="Close Price History" 
+                         class="w-full rounded-lg">
+                    {% else %}
+                    <p class="text-red-600 text-center">Grafik harga penutupan tidak tersedia</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Moving Average Analysis -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4">Moving Average Analysis</h2>
+                <div class="bg-white rounded-lg shadow-lg p-4">
+                    {% if ma_plot %}
+                    <img src="{{ ma_plot }}" 
+                         alt="Moving Average Analysis" 
+                         class="w-full rounded-lg">
+                    {% else %}
+                    <p class="text-red-600 text-center">Grafik moving average tidak tersedia</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Legend and Information -->
+            <div class="bg-gray-50 rounded-lg p-4 mb-8">
+                <h3 class="font-semibold text-gray-700 mb-2">Keterangan:</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-600">
+                    <li>MA-100: Moving Average 100 hari (Garis Hijau)</li>
+                    <li>MA-365: Moving Average 365 hari (Garis Merah)</li>
+                    <li>Close Price: Harga Penutupan (Garis Biru)</li>
+                </ul>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-center space-x-4">
+                <a href="{{ url_for('input') }}" 
+                   class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                    Kembali ke Input
+                </a>
+                <a href="{{ url_for('index') }}" 
+                   class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors duration-200">
+                    Kembali ke Beranda
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

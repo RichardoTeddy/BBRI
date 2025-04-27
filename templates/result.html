@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="min-h-screen bg-cover bg-fixed bg-center relative" style="background-image: url('{{ url_for('static', filename='bg.jpg') }}');">
+    <div class="absolute inset-0 w-full h-full bg-black/40 pointer-events-none"></div>
+    <div class="relative z-10">
+        <div class="container mx-auto px-4 py-8">
+            <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-2xl p-8 max-w-4xl mx-auto">
+                <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">Prediction Results</h1>
+
+                <div class="space-y-8">
+                    <!-- Historical Close Price -->
+                    <div class="bg-white/80 rounded-lg p-6 shadow-lg">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4">Historical Close Price</h2>
+                        <img src="{{ plots.historical }}" alt="Historical Price Plot" class="w-full rounded-lg">
+                    </div>
+
+                    <!-- Training vs Validation Loss -->
+                    {% if plots.loss %}
+                    <div class="bg-white/80 rounded-lg p-6 shadow-lg">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4">Training vs Validation Loss</h2>
+                        <img src="{{ plots.loss }}" alt="Loss Plot" class="w-full rounded-lg">
+                    </div>
+                    {% endif %}
+
+                    <!-- Prediction vs Actual -->
+                    <div class="bg-white/80 rounded-lg p-6 shadow-lg">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4">Prediction vs Actual Close Price</h2>
+                        <img src="{{ plots.comparison }}" alt="Comparison Plot" class="w-full rounded-lg">
+                    </div>
+
+                    <!-- MAPE Distribution -->
+                    <div class="bg-white/80 rounded-lg p-6 shadow-lg">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4">MAPE Distribution</h2>
+                        <img src="{{ plots.mape_dist }}" alt="MAPE Distribution" class="w-full rounded-lg">
+                        <div class="mt-4 space-y-2">
+                            <p class="text-lg font-medium text-gray-700">
+                                Model Performance (MAPE): <span class="text-blue-600 font-bold">{{ "%.2f"|format(mape) }}%</span>
+                            </p>
+                            <p class="text-lg font-medium text-gray-700">
+                                Model Accuracy: <span class="text-green-600 font-bold">{{ "%.2f"|format(100 - mape) }}%</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Future Predictions -->
+                    <div class="bg-white/80 rounded-lg p-6 shadow-lg">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4">Future Price Predictions</h2>
+                        <img src="{{ plots.future }}" alt="Future Predictions Plot" class="w-full rounded-lg">
+                    </div>
+
+                    <!-- Detailed Predictions Table -->
+                    <div class="bg-white/80 rounded-lg p-6 shadow-lg">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4">Detailed Predictions</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-6 py-3 text-gray-700">Date</th>
+                                        <th class="px-6 py-3 text-gray-700">Predicted Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    {% for pred in prediction_data %}
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4">{{ pred.date }}</td>
+                                        <td class="px-6 py-4 font-medium text-blue-600">{{ "%.2f"|format(pred.price) }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <a href="{{ url_for('index') }}" 
+                       class="inline-block bg-blue-600 text-white py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium text-lg">
+                        Make Another Prediction
+                    </a>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center text-white">
+                <p class="text-sm font-medium">
+                    Developed using Long Short-Term Memory (LSTM) Neural Networks
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
