@@ -6,16 +6,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 from flask import Flask, render_template, request, jsonify
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 from sklearn.preprocessing import MinMaxScaler
 from datetime import datetime, timedelta
 import json
 import yfinance as yf
 from flask_frozen import Freezer
+import logging
 
 # Configure matplotlib
 matplotlib.use('Agg')
 plt.style.use('fivethirtyeight')
+
+# Configure logging
+logging.basicConfig(filename='error.log', level=logging.DEBUG)
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -291,44 +295,29 @@ def hasil():
         # Load stock data
         stock_data = load_stock_data()
 
-        # Generate Close Price History plot
-        plt.figure(figsize=(15, 6))
-        plt.plot(stock_data.index,
-                 stock_data['Close'], color='blue', linewidth=2)
-        plt.title('Historical Close Price BBRI')
-        plt.xlabel('Date')
-        plt.ylabel('Price (IDR)')
-        plt.grid(True, alpha=0.3)
-
-        # Save close price plot
-        close_price_buffer = io.BytesIO()
-        plt.savefig(close_price_buffer, format='png', bbox_inches='tight')
-        close_price_buffer.seek(0)
-        close_price_plot = base64.b64encode(
-            close_price_buffer.getvalue()).decode()
-        plt.close()
-
         # Calculate Moving Averages
         ma_100 = stock_data['Close'].rolling(window=100).mean()
         ma_365 = stock_data['Close'].rolling(window=365).mean()
 
-        # Generate Moving Average plot
-        plt.figure(figsize=(15, 6))
+        # Generate Moving Average plot (which includes close price)
+        plt.figure(figsize=(15, 8))
         plt.plot(stock_data.index, stock_data['Close'],
                  label='Close Price', color='blue', linewidth=2)
         plt.plot(stock_data.index, ma_100, label='MA-100',
                  color='green', linestyle='--', linewidth=2)
         plt.plot(stock_data.index, ma_365, label='MA-365',
                  color='red', linestyle='--', linewidth=2)
-        plt.title('Close Price with Moving Averages')
-        plt.xlabel('Date')
-        plt.ylabel('Price (IDR)')
-        plt.legend()
+        plt.title('Close Price with Moving Averages', fontsize=14)
+        plt.xlabel('Date', fontsize=12)
+        plt.ylabel('Price (IDR)', fontsize=12)
+        plt.legend(fontsize=11)
         plt.grid(True, alpha=0.3)
+        plt.margins(0.02)
+        plt.tight_layout(pad=3.0)
 
-        # Save MA plot
+        # Save MA plot with high DPI for better quality
         ma_buffer = io.BytesIO()
-        plt.savefig(ma_buffer, format='png', bbox_inches='tight')
+        plt.savefig(ma_buffer, format='png', dpi=120, bbox_inches='tight')
         ma_buffer.seek(0)
         ma_plot = base64.b64encode(ma_buffer.getvalue()).decode()
         plt.close()
@@ -336,7 +325,6 @@ def hasil():
         return render_template(
             "hasil.html",
             title="Hasil Analisis",
-            close_price_plot=f"data:image/png;base64,{close_price_plot}",
             ma_plot=f"data:image/png;base64,{ma_plot}"
         )
 
@@ -446,35 +434,58 @@ def predict():
 
 
 def generate_trend_plot(stock_data, future_dates, future_prices):
-    """Generate historical and future trend plot"""
-    plt.figure(figsize=(12, 6))
+    """Generate historical and future trend plot with smooth transition"""
+    try:
+        plt.figure(figsize=(12, 6))
 
-    # Plot historical data (last 100 days)
-    historical_dates = stock_data.index[-100:]
-    historical_prices = stock_data['Close'].iloc[-100:]
-    plt.plot(historical_dates, historical_prices,
-             color='blue', label='Data Historis')
+        # Get last 100 days of historical data
+        historical_dates = stock_data.index[-100:]
+        historical_prices = stock_data['Close'].iloc[-100:]
 
-    # Plot future predictions
-    plt.plot(future_dates, future_prices,
-             color='orange', label='Prediksi')
+        # Create continuous date range including overlap
+        last_historical_date = historical_dates[-1]
+        combined_dates = historical_dates.tolist() + future_dates.tolist()
 
-    plt.title('Trend Historis dan Prediksi Harga')
-    plt.xlabel('Tanggal')
-    plt.ylabel('Harga (IDR)')
-    plt.xticks(rotation=45)
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
+        # Create continuous price data
+        last_historical_price = historical_prices.iloc[-1]
+        combined_prices = historical_prices.tolist(
+        ) + [price[0] for price in future_prices]
 
-    # Convert plot to base64 string
-    img = io.BytesIO()
-    plt.savefig(img, format='png')
-    img.seek(0)
-    plot_url = base64.b64encode(img.getvalue()).decode()
-    plt.close()
+        # Plot as one continuous line
+        plt.plot(combined_dates[:len(historical_prices)],
+                 combined_prices[:len(historical_prices)],
+                 color='blue',
+                 label='Data Historis',
+                 linewidth=2)
 
-    return f'<img src="data:image/png;base64,{plot_url}">'
+        plt.plot(combined_dates[len(historical_prices)-1:],
+                 combined_prices[len(historical_prices)-1:],
+                 color='orange',
+                 label='Prediksi',
+                 linewidth=2)
+
+        plt.title('Trend Historis dan Prediksi Harga', fontsize=14)
+        plt.xlabel('Tanggal', fontsize=12)
+        plt.ylabel('Harga (IDR)', fontsize=12)
+        plt.grid(True, alpha=0.3)
+        plt.legend(fontsize=11)
+
+        # Improve x-axis formatting
+        plt.gcf().autofmt_xdate()  # Rotate and align the tick labels
+        plt.tight_layout()
+
+        # Convert plot to base64 string
+        img = io.BytesIO()
+        plt.savefig(img, format='png', dpi=100, bbox_inches='tight')
+        img.seek(0)
+        plot_url = base64.b64encode(img.getvalue()).decode()
+        plt.close()
+
+        return f'<img src="data:image/png;base64,{plot_url}">'
+
+    except Exception as e:
+        print(f"Error in generate_trend_plot: {str(e)}")
+        return None
 
 
 def generate_validation_plot(model, stock_data):
@@ -664,11 +675,18 @@ def generate_loss_plot(model_history):
     return f'<img src="data:image/png;base64,{plot_url}">'
 
 
+@app.errorhandler(500)
+def internal_error(error):
+    app.logger.error('Server Error: %s', error)
+    return render_template('500.html'), 500
+
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'), 404
+
+
 if __name__ == "__main__":
     if model is None:
         print("Warning: Model failed to load. Predictions will not work.")
-    if os.environ.get('FREEZER_BASE_URL'):
-        freezer = Freezer(app)
-        freezer.freeze()
-    else:
-        app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    app.run(host='0.0.0.0', port=5000, debug=False)

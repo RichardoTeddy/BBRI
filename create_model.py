@@ -4,7 +4,7 @@ from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
 from keras.layers import LSTM, Dense, Dropout
 from keras.callbacks import EarlyStopping
-import matplotlib.pyplot as plt
+from keras.optimizers import Adam
 import json
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -14,6 +14,10 @@ import os
 SEQUENCE_LENGTH = 100
 DATA_PATH = 'BBRI.JK.NEW.csv'
 STEP = 5
+BATCH_SIZE = 32
+EPOCHS = 50
+LEARNING_RATE = 0.001
+TRAIN_SPLIT = 0.8
 
 
 def create_model():
@@ -64,12 +68,12 @@ def create_model():
 
         # Split data
         print("Splitting data...")
-        train_size = int(len(x_data) * 0.9)
+        train_size = int(len(x_data) * TRAIN_SPLIT)
         x_train, y_train = x_data[:train_size], y_data[:train_size]
         x_test, y_test = x_data[train_size:], y_data[train_size:]
 
         # Create validation set
-        val_size = int(len(x_train) * 0.1)
+        val_size = int(len(x_train) * 0.2)
         x_val, y_val = x_train[-val_size:], y_train[-val_size:]
         x_train, y_train = x_train[:-val_size], y_train[:-val_size]
 
@@ -82,13 +86,14 @@ def create_model():
         print("Creating LSTM model...")
         model = Sequential([
             LSTM(128, return_sequences=True, input_shape=(SEQUENCE_LENGTH, 1)),
-            LSTM(64, return_sequences=True),
-            LSTM(32, return_sequences=False),
-            Dense(25),
-            Dense(1)
+            Dropout(0.1),
+            LSTM(64),  # Second LSTM layer
+            Dropout(0.1),
+            Dense(1)  # Output layer
         ])
 
-        model.compile(optimizer="adam", loss="mean_squared_error")
+        model.compile(optimizer=Adam(learning_rate=LEARNING_RATE),
+                      loss='mean_squared_error')
 
         # Train model with early stopping
         print("Training model...")
@@ -101,8 +106,8 @@ def create_model():
         history = model.fit(
             x_train, y_train,
             validation_data=(x_val, y_val),
-            epochs=50,
-            batch_size=5,
+            epochs=EPOCHS,
+            batch_size=BATCH_SIZE,
             callbacks=[early_stopping],
             verbose=1
         )
