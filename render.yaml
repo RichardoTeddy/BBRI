@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: bbri-predict
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.7
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1

@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BBRI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #60A5FA;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .nav-link.active {
+            color: #60A5FA;
+        }
+        .nav-link.active::after {
+            width: 100%;
+        }
+        @media (max-width: 768px) {
+            .mobile-menu {
+                display: none;
+            }
+            .mobile-menu.show {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800/90 backdrop-blur-md shadow-lg p-4 z-50">
+        <div class="container mx-auto">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-chart-line text-blue-400 text-2xl"></i>
+                    <span class="text-white font-bold text-xl hidden md:inline">Stock Predictor</span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="/" class="nav-link text-white hover:text-blue-400 transition-colors ">
+                        <i class="fas fa-home mr-2"></i>BERANDA
+                    </a>
+                    <a href="/bbri" class="nav-link text-white hover:text-blue-400 transition-colors active">
+                        <i class="fas fa-building-columns mr-2"></i>BBRI
+                    </a>
+                    <a href="/lstm" class="nav-link text-white hover:text-blue-400 transition-colors ">
+                        <i class="fas fa-brain mr-2"></i>LSTM
+                    </a>
+                    <a href="/input" class="nav-link text-white hover:text-blue-400 transition-colors ">
+                        <i class="fas fa-input-numeric mr-2"></i>INPUT
+                    </a>
+                    <a href="/hasil" class="nav-link text-white hover:text-blue-400 transition-colors ">
+                        <i class="fas fa-chart-bar mr-2"></i>HASIL
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden text-white hover:text-blue-400 focus:outline-none" onclick="toggleMenu()">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div class="mobile-menu flex-col space-y-4 mt-4 md:hidden">
+                <a href="/" class="text-white hover:text-blue-400 transition-colors">
+                    <i class="fas fa-home mr-2"></i>BERANDA
+                </a>
+                <a href="/bbri" class="text-white hover:text-blue-400 transition-colors">
+                    <i class="fas fa-building-columns mr-2"></i>BBRI
+                </a>
+                <a href="/lstm" class="text-white hover:text-blue-400 transition-colors">
+                    <i class="fas fa-brain mr-2"></i>LSTM
+                </a>
+                <a href="/input" class="text-white hover:text-blue-400 transition-colors">
+                    <i class="fas fa-input-numeric mr-2"></i>INPUT
+                </a>
+                <a href="/hasil" class="text-white hover:text-blue-400 transition-colors">
+                    <i class="fas fa-chart-bar mr-2"></i>HASIL
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content with proper spacing from navbar -->
+    <div class="pt-20">
+        
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script src="https://unpkg.com/unlazy@0.11.3/dist/unlazy.with-hashing.iife.js" defer init></script>
+    <script type="text/javascript">
+      window.tailwind.config = {
+        darkMode: ['class'],
+        theme: {
+          extend: {
+            colors: {
+              border: 'hsl(var(--border))',
+              input: 'hsl(var(--input))',
+              ring: 'hsl(var(--ring))',
+              background: 'hsl(var(--background))',
+              foreground: 'hsl(var(--foreground))',
+              primary: {
+                DEFAULT: 'hsl(var(--primary))',
+                foreground: 'hsl(var(--primary-foreground))'
+              },
+              secondary: {
+                DEFAULT: 'hsl(var(--secondary))',
+                foreground: 'hsl(var(--secondary-foreground))'
+              },
+              destructive: {
+                DEFAULT: 'hsl(var(--destructive))',
+                foreground: 'hsl(var(--destructive-foreground))'
+              },
+              muted: {
+                DEFAULT: 'hsl(var(--muted))',
+                foreground: 'hsl(var(--muted-foreground))'
+              },
+              accent: {
+                DEFAULT: 'hsl(var(--accent))',
+                foreground: 'hsl(var(--accent-foreground))'
+              },
+              popover: {
+                DEFAULT: 'hsl(var(--popover))',
+                foreground: 'hsl(var(--popover-foreground))'
+              },
+              card: {
+                DEFAULT: 'hsl(var(--card))',
+                foreground: 'hsl(var(--card-foreground))'
+              },
+            },
+          }
+        }
+      }
+    </script>
+    <style type="text/tailwindcss">
+      @layer base {
+        html, body {
+          height: 100%;
+          width: 100%;
+          margin: 0;
+        }
+        :root {
+          --background: 0 0% 100%;
+          --foreground: 240 10% 3.9%;
+          --card: 0 0% 100%;
+          --card-foreground: 240 10% 3.9%;
+          --popover: 0 0% 100%;
+          --popover-foreground: 240 10% 3.9%;
+          --primary: 240 5.9% 10%;
+          --primary-foreground: 0 0% 98%;
+          --secondary: 240 4.8% 95.9%;
+          --secondary-foreground: 240 5.9% 10%;
+          --muted: 240 4.8% 95.9%;
+          --muted-foreground: 240 3.8% 46.1%;
+          --accent: 240 4.8% 95.9%;
+          --accent-foreground: 240 5.9% 10%;
+          --destructive: 0 84.2% 60.2%;
+          --destructive-foreground: 0 0% 98%;
+          --border: 240 5.9% 90%;
+          --input: 240 5.9% 90%;
+          --ring: 240 5.9% 10%;
+          --radius: 0.5rem;
+        }
+        .dark {
+          --background: 240 10% 3.9%;
+          --foreground: 0 0% 98%;
+          --card: 240 10% 3.9%;
+          --card-foreground: 0 0% 98%;
+          --popover: 240 10% 3.9%;
+          --popover-foreground: 0 0% 98%;
+          --primary: 0 0% 98%;
+          --primary-foreground: 240 5.9% 10%;
+          --secondary: 240 3.7% 15.9%;
+          --secondary-foreground: 0 0% 98%;
+          --muted: 240 3.7% 15.9%;
+          --muted-foreground: 240 5% 64.9%;
+          --accent: 240 3.7% 15.9%;
+          --accent-foreground: 0 0% 98%;
+          --destructive: 0 62.8% 30.6%;
+          --destructive-foreground: 0 0% 98%;
+          --border: 240 3.7% 15.9%;
+          --input: 240 3.7% 15.9%;
+          --ring: 240 4.9% 83.9%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="fixed inset-0 w-full h-full bg-cover bg-center" style="background-image: url('/static/bg.jpg');">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="relative h-screen flex flex-col items-center justify-center p-6">
+            <div class="w-full max-w-4xl bg-white/90 backdrop-blur-sm rounded-xl shadow-2xl p-8 overflow-y-auto max-h-[80vh]">
+                <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">Bank Rakyat Indonesia (BBRI)</h1>
+                
+                <div class="space-y-6 text-gray-700">
+                    <p class="text-lg">
+                        PT Bank Rakyat Indonesia (Persero) Tbk, yang dikenal dengan kode saham BBRI, adalah salah satu bank terbesar dan terkemuka di Indonesia. Didirikan pada tahun 1895, BBRI memiliki fokus utama pada sektor mikro, kecil, dan menengah (UMKM), serta memberikan layanan perbankan yang komprehensif kepada masyarakat.
+                    </p>
+
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h2 class="text-xl font-semibold mb-4">Keunggulan BBRI:</h2>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li>Jaringan cabang yang luas di seluruh Indonesia</li>
+                            <li>Fokus pada sektor UMKM</li>
+                            <li>Layanan perbankan digital yang inovatif</li>
+                            <li>Kinerja keuangan yang solid</li>
+                        </ul>
+                    </div>
+
+                    <p class="text-lg">
+                        Dengan jaringan cabang yang luas dan berbagai produk keuangan, BBRI berkomitmen untuk mendukung pertumbuhan ekonomi nasional dan meningkatkan inklusi keuangan di Indonesia. Bank ini juga tercatat di Bursa Efek Indonesia dan menjadi salah satu emiten dengan kapitalisasi pasar terbesar.
+                    </p>
+
+                    <p class="text-lg">
+                        Saham BBRI telah menjadi pilihan investasi yang menarik bagi banyak investor, berkat kinerja keuangan yang solid dan pertumbuhan yang konsisten. Dalam beberapa tahun terakhir, BBRI menunjukkan peningkatan yang signifikan dalam pendapatan dan laba bersih, didorong oleh strategi ekspansi dan inovasi digital dalam layanan perbankan.
+                    </p>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <a href="/" 
+                       class="inline-block bg-blue-600 text-white py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium text-lg">
+                        Kembali ke Beranda
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+  </body>
+</html>
+
+
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const mobileMenu = document.querySelector('.mobile-menu');
+            mobileMenu.classList.toggle('show');
+        }
+
+        // Highlight current page
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

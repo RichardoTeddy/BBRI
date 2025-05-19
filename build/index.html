@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beranda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #60A5FA;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .nav-link.active {
+            color: #60A5FA;
+        }
+        .nav-link.active::after {
+            width: 100%;
+        }
+        @media (max-width: 768px) {
+            .mobile-menu {
+                display: none;
+            }
+            .mobile-menu.show {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800/90 backdrop-blur-md shadow-lg p-4 z-50">
+        <div class="container mx-auto">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-chart-line text-blue-400 text-2xl"></i>
+                    <span class="text-white font-bold text-xl hidden md:inline">Stock Predictor</span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="/" class="nav-link text-white hover:text-blue-400 transition-colors active">
+                        <i class="fas fa-home mr-2"></i>BERANDA
+                    </a>
+                    <a href="/bbri" class="nav-link text-white hover:text-blue-400 transition-colors ">
+                        <i class="fas fa-building-columns mr-2"></i>BBRI
+                    </a>
+                    <a href="/lstm" class="nav-link text-white hover:text-blue-400 transition-colors ">
+                        <i class="fas fa-brain mr-2"></i>LSTM
+                    </a>
+                    <a href="/input" class="nav-link text-white hover:text-blue-400 transition-colors ">
+                        <i class="fas fa-input-numeric mr-2"></i>INPUT
+                    </a>
+                    <a href="/hasil" class="nav-link text-white hover:text-blue-400 transition-colors ">
+                        <i class="fas fa-chart-bar mr-2"></i>HASIL
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden text-white hover:text-blue-400 focus:outline-none" onclick="toggleMenu()">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div class="mobile-menu flex-col space-y-4 mt-4 md:hidden">
+                <a href="/" class="text-white hover:text-blue-400 transition-colors">
+                    <i class="fas fa-home mr-2"></i>BERANDA
+                </a>
+                <a href="/bbri" class="text-white hover:text-blue-400 transition-colors">
+                    <i class="fas fa-building-columns mr-2"></i>BBRI
+                </a>
+                <a href="/lstm" class="text-white hover:text-blue-400 transition-colors">
+                    <i class="fas fa-brain mr-2"></i>LSTM
+                </a>
+                <a href="/input" class="text-white hover:text-blue-400 transition-colors">
+                    <i class="fas fa-input-numeric mr-2"></i>INPUT
+                </a>
+                <a href="/hasil" class="text-white hover:text-blue-400 transition-colors">
+                    <i class="fas fa-chart-bar mr-2"></i>HASIL
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content with proper spacing from navbar -->
+    <div class="pt-20">
+        
+<div class="fixed inset-0 w-full h-full bg-cover bg-center" style="background-image: url('/static/bg.jpg');">
+    <div class="absolute inset-0 bg-gradient-to-br from-black/50 to-black/30"></div>
+    <div class="relative h-screen flex flex-col items-center justify-center p-6">
+        <div class="w-full max-w-6xl px-4">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                    PREDIKSI HARGA PENUTUPAN SAHAM BBRI<br/>
+                    DENGAN PENDEKATAN DEEP LEARNING:<br/>
+                    STUDI KASUS LONG SHORT-TERM MEMORY (LSTM)
+                </h1>
+                <p class="text-xl text-white/90 mb-12 max-w-3xl mx-auto">
+                    Model Prediksi Saham BBRI ini menggunakan parameter Harga penutupan untuk mengetahui probabilitas kenaikan Harga menggunakan metode LSTM.
+                </p>
+                <div class="flex justify-center">
+                    <a href="/input" 
+                       class="inline-block bg-white text-gray-900 hover:bg-gray-100 px-12 py-4 rounded-lg transition-colors duration-200 font-semibold text-lg shadow-lg">
+                        Mulai
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute bottom-8 text-center text-white/70">
+            <p class="text-sm font-medium">
+                Created by Richardo Teddy Ardhana 215314015
+            </p>
+            <p class="text-sm font-medium">
+                Developed using Long Short-Term Memory (LSTM) Neural Networks
+            </p>
+        </div>
+    </div>
+</div>
+
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const mobileMenu = document.querySelector('.mobile-menu');
+            mobileMenu.classList.toggle('show');
+        }
+
+        // Highlight current page
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

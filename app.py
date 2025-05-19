@@ -689,4 +689,13 @@ def not_found_error(error):
 if __name__ == "__main__":
     if model is None:
         print("Warning: Model failed to load. Predictions will not work.")
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    if os.environ.get('FREEZER_BASE_URL'):
+        freezer = Freezer(app)
+        freezer.freeze()
+    else:
+        port = int(os.environ.get('PORT', 5000))
+        print(f"\n🚀 Flask server is running!")
+        print(f"💻 Local URL: http://127.0.0.1:{port}")
+        print(f"🌐 Network URL: http://0.0.0.0:{port}")
+        print("\nPress CTRL+C to quit")
+        app.run(host='0.0.0.0', port=port, debug=True)
