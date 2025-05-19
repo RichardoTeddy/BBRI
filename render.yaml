@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 services:
   - type: web
     name: bbri-predict
@@ -11,3 +12,18 @@ services:
       name: data
       mountPath: /data
       sizeGB: 1
+=======
+services:
+  - type: web
+    name: bbri-predict
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.7
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1
+>>>>>>> 8a404b209bc8e234d7aa1b69569b98602191ac87
